@@ -162,6 +162,10 @@ class Editor extends Component {
               value={this.state.client.name}
               onChange={this._clientChangeHandler.bind(this, 'name')}
               placeholder="Client's Full Name" size='large' />
+            <Input addonBefore='Email'
+              value={this.state.client.email}
+              onChange={this._clientChangeHandler.bind(this, 'email')}
+              placeholder="Client's email" size='large' />
             <Input addonBefore='Street Address'
               value={this.state.client.streetAddr}
               onChange={this._clientChangeHandler.bind(this, 'streetAddr')}
