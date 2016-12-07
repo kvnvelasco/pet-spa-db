@@ -1,15 +1,14 @@
 {
-  "name": "electron-react-boilerplate",
-  "productName": "electron-react-boilerplate",
+  "name": "aroma-pet-spa-db",
+  "productName": "Aroma Pet Spa Database",
   "version": "1.0.0",
-  "description": "Electron application boilerplate based on React, React Router, Webpack, React Hot Loader for rapid application development",
+  "description": "A pet spa database application",
   "main": "./main.js",
   "author": {
-    "name": "C. T. Lin",
-    "email": "chentsulin@gmail.com",
-    "url": "https://github.com/chentsulin"
+    "name": "Kevin Velasco",
+    "email": "me@kvnvelasco.com",
+    "url": "https://github.com/kvnvelasco"
   },
   "license": "MIT",
-  "dependencies": {
-  }
+  "dependencies": {}
 }

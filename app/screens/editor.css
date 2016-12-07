@@ -1,0 +1,28 @@
+#editor-window {
+  position: fixed;
+  right: -600px;
+  top: 0;
+  height: 100%;
+  width: 600px;
+  transition: transform 0.3s ease-in;
+  background:white;
+  overflow-y: scroll;
+}
+
+#overlay {
+  position: absolute;
+  top: 0;
+  left:0;
+  width: 100%;
+  min-height: 100vh;
+  pointer-events:none;
+}
+
+#editor-window.open {
+  transform: translateX(-600px);
+}
+
+#overlay.open {
+  pointer-events: auto;
+  background-color: rgba(0,0,0,0.5);
+}

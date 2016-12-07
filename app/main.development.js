@@ -20,7 +20,6 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
 });
 
-
 const installExtensions = async () => {
   if (process.env.NODE_ENV === 'development') {
     const installer = require('electron-devtools-installer'); // eslint-disable-line global-require
@@ -43,8 +42,10 @@ app.on('ready', async () => {
 
   mainWindow = new BrowserWindow({
     show: false,
-    width: 1024,
-    height: 728
+    width: 1280,
+    height: 728,
+    'minHeight': 600,
+    'minWidth': 1280
   });
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
