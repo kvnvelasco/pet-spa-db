@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { Input, Icon, Col, Row, AutoComplete, Button, Modal, Radio, DatePicker, Table } from 'antd'
+import { Select, Input, Icon, Col, Row, AutoComplete, Button, Modal, Radio, DatePicker, Table } from 'antd'
 import { IconWithText } from '../components/text'
 
 import enUS from 'antd/lib/date-picker/locale/en_US'
@@ -71,7 +71,6 @@ class Editor extends Component {
     delete clientToSave.phonePrefix
 
     this.props.dispatch(saveClient(clientToSave))
-    this._clientCancelHandler()
   }
 
   _bootstrap(client) {
@@ -111,6 +110,7 @@ class Editor extends Component {
       petToSave.birthdate = moment().locale('en').utcOffset(8)
     }
     petToSave.birthdate = petToSave.birthdate.toString()
+    petToSave.size = petToSave.size || 'small'
     if(petToSave.edited !== undefined) {
       this.setState({
         client: {...this.state.client,
@@ -255,6 +255,20 @@ class Editor extends Component {
                 <RadioButton value='Cat'>Cat</RadioButton>
               </RadioGroup>
             </Row>
+            { this.state.newPet.type == 'Dog' ?
+              <Row style={{marginBottom: '10px'}}>
+                <h4>Animal size</h4>
+                <RadioGroup size="large"
+                  defaultValue='small'
+                  value={this.state.newPet.size}
+                  onChange={this._petChangeHandler.bind(this, 'size')}>
+                  <RadioButton value='small'>Small</RadioButton>
+                  <RadioButton value='medium'>Medium</RadioButton>
+                  <RadioButton value='large'>Large</RadioButton>
+                  <RadioButton value='xl'>Extra Large</RadioButton>
+                </RadioGroup>
+              </Row>
+            : null }
             <Row type='flex' justify='space-between' gutter={20}>
               <Col span={10}>
                 <Input size='large'
@@ -278,10 +292,6 @@ class Editor extends Component {
                   locale={enUS}/>
               </Col>
             </Row>
-            <Input
-              value={this.state.newPet.groomer}
-              onChange={this._petChangeHandler.bind(this, 'groomer')}
-              size='large' addonBefore='Groomer' />
             <Input
               value={this.state.newPet.comments}
               onChange={this._petChangeHandler.bind(this, 'comments')}

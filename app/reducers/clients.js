@@ -3,7 +3,8 @@ const initialState = {
   filtered: {
     show: false,
     list: []
-  }
+  },
+  selected: {}
 }
 
 
@@ -33,11 +34,15 @@ export default function reducer(state=initialState, action){
     case EDIT_CLIENT:
      return {...state, active: action.payload}
     case FILTER_CLIENTS:
-      return {...state, filtered: {show: true, list: action.payload}}
+      return {...state, filtered: {show: true, list: action.payload.filtered, query: action.payload.query} }
     case UNFILTER_CLIENTS:
       return {...state, filtered: {show: false, list: []}}
     case 'CLOSE_EDITOR':
       return {...state, active: null}
+    case 'ADD_TRANSACTION':
+      return {...state, selected: {client: action.payload, show: true}}
+    case 'CANCEL_TRANSACTION':
+      return {...state, selected: {client: {}, show: false}}
     case 'DELETE_CLIENT':
       let index
       for(index = 0; index < state.list.length; index++) {

@@ -8,6 +8,13 @@ body {
   font-size: 16px;
 }
 
+.pet-card {
+  background: #EFF1F3;
+  padding: 10px !important;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+}
+
 .ant-card {
   font-size: 14px;
 }
@@ -72,4 +79,13 @@ body {
 #sidebar {
   height: 100%;
   width: 100%;
+}
+
+#sidebar .timeline {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.transaction .ant-row {
+  margin-bottom: 10px;
 }

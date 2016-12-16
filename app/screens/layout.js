@@ -53,9 +53,8 @@ class Layout extends Component {
               </Row> */}
 
               <Row type='flex' style={{minHeight: '100vh'}}>
-                <Col span={4}>
+                <Col span={5}>
                   <Sidebar />
-
                 </Col>
                 <Col span={19}>
                   {this.props.children}

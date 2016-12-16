@@ -5,7 +5,7 @@ export const UNFILTER_CLIENTS = 'UNFILTER_CLIENTS'
 
 import { add, put, list , dbDelete } from '../utils/db'
 import { message } from 'antd'
-
+import { closeEditor } from './layout'
 export function saveClient(data) {
   return async dispatch => {
     if (!data) return
@@ -18,6 +18,7 @@ export function saveClient(data) {
       }
 
       dispatch({type: SAVE_CLIENT, payload: {...data, id: id || data.id}})
+      dispatch({type: 'CLOSE_EDITOR'})
       message.success('Saved!', 5)
     } catch (e) {
       message.error(`Failed to save. Reason: ${e.message}`, 5)
@@ -35,6 +36,7 @@ export function getClients() {
     }
   }
 }
+
 // bfs with query
 function traverse(o, query) {
     for (var i in o) {
@@ -60,7 +62,7 @@ export function filterClients(query, array) {
       if(found) return [...acc, index]
       return acc
     }, [])
-    dispatch({type: FILTER_CLIENTS, payload: filtered})
+    dispatch({type: FILTER_CLIENTS, payload: {filtered, query}})
   }
 }
 

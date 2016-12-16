@@ -4,6 +4,8 @@ import moment from 'moment'
 
 import {Timeline} from 'antd'
 
+import { filterClients } from '../actions/client'
+
 class Sidebar extends Component {
   constructor(){
     super()
@@ -26,6 +28,9 @@ class Sidebar extends Component {
     this.setState({pets})
   }
 
+  _searchHandler(query) {
+    this.props.dispatch(filterClients(query, this.props.clients))
+  }
   render() {
     let timeline = this.state.pets.filter( item => item.birthdate.diff(moment(), 'days') < 14)
     .map( (item, index) => {
@@ -37,7 +42,8 @@ class Sidebar extends Component {
         lastWeek: '[Last] dddd',
         sameElse: 'Do MMM, YYYY'
       }
-      return <Timeline.Item key={index}>{`${item.name} ${item.birthdate.calendar(null, format)}`}</Timeline.Item>
+      return <Timeline.Item className='timeline' onClick={this._searchHandler.bind(this, item.owner.name)}
+      key={index}>{`${item.owner.name}'s ${item.type} ${item.name} ${item.birthdate.calendar(null, format)}`}</Timeline.Item>
     })
     return (
       <div id='sidebar' className='padded-area'>
@@ -53,6 +59,10 @@ class Sidebar extends Component {
 
 export default connect( store => ({
   pets: store.clients.list.flatMap( item => {
-    return item.pets
-  })
+    const pets = item.pets.map( pet => {
+      return {...pet, owner: {name: item.name, contact: item.contact, email: item.email}}
+    })
+    return pets
+  }),
+  clients: store.clients.list
 }))(Sidebar)

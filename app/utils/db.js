@@ -11,15 +11,6 @@ const INDEXES = {
 }
 
 const SCHEMA = {
-  animals: {
-    name: 'string' ,
-    breed: 'string',
-    type: ['Feline', 'Canine'],
-    birthdate: 'Date',
-    comments: 'string',
-    groomer: 'number'
-  },
-
   clients: {
      name: 'string',
      address: {
@@ -32,11 +23,12 @@ const SCHEMA = {
       number: 'number'
      },
      email: 'string' ,
-     facebook: 'string',
-     pets: 'array'
-  },
-  groomers: {
-    name: 'string'
+     pets: {
+       name: 'string',
+       birthdate: 'string',
+       type: 'string',
+       size: 'string'
+     }
   }
 };
 
@@ -51,24 +43,30 @@ const init = () => {
 }
 
 const verify = (table, object) => {
-  for( const key of Object.keys(object)) {
-    if(key === 'id' || key === 'key') continue
-    const type = typeof table[key] === 'string' ? table[key] : 'object'
+  if(Array.isArray(object)) {
+    object.forEach( item => {
+      verify(table, item)
+    })
+  } else {
+    for( const key of Object.keys(table)) {
+      if(key === 'id' || key === 'key') continue
+      if(!object[key]) throw {type: 'Required Field Missing', message: `${key}  is blank`}
 
-    if(type == 'array' && object[key].length >= 0){
-      continue
-    }
+      const type = typeof table[key] === 'string' ? table[key] : 'object'
+      if(type == 'array' && object[key].length >= 0){
+        continue
+      }
 
-    if(typeof object[key] !== type ) {
-      console.log(object)
-      throw {type: 'Schema Mismatch', message: `${key} must be ${table[key]} but it's ${object[key] || 'blank'}`}
-    }
+     if(type === 'object')  verify(table[key], object[key])
 
-    if(type === 'object') {
-      verify(table[key], object[key])
+     if(typeof object[key] !== type ) {
+        console.log(typeof object[key], type)
+        throw {type: 'Schema Mismatch', message: `${key} must be ${table[key]} but it's ${object[key] || 'blank'}`}
+      }
+
     }
+    return true
   }
-  return true
 }
 
 export async function add(table, object) {
