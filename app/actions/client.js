@@ -11,14 +11,17 @@ export function saveClient(data) {
     if (!data) return
     let id
     try {
+      // add default values
+      if(data.address && !data.address.country) data.address.country = 'Philippines'
+      // Manipulate saved client
       if(data.id) {
         id = await put('clients', data)
       } else {
         id = await add('clients', data)
       }
-
       dispatch({type: SAVE_CLIENT, payload: {...data, id: id || data.id}})
       dispatch({type: 'CLOSE_EDITOR'})
+      dispatch({type: 'CLOSE_RECORD'})
       message.success('Saved!', 5)
     } catch (e) {
       message.error(`Failed to save. Reason: ${e.message}`, 5)
@@ -69,6 +72,7 @@ export function filterClients(query, array) {
 export function editClient(data) {
   return async dispatch => {
     dispatch({type: EDIT_CLIENT, payload: data})
+    dispatch({type: 'CLOSE_RECORD'})
     dispatch({type: 'OPEN_EDITOR'})
   }
 }
@@ -78,6 +82,8 @@ export function deleteClient(id) {
     try {
       const deleted = await dbDelete('clients', id)
       dispatch({type: 'DELETE_CLIENT', payload: id})
+      dispatch({type: 'CLOSE_EDITOR'})
+      dispatch({type: 'CLOSE_RECORD'})
       message.success('Deleted!', 5)
     } catch (e) {
       message.error(`Failed to delete. Reason: ${e.message}`, 5)

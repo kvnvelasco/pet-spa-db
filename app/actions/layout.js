@@ -4,6 +4,7 @@ export const TOGGLE_EDITOR = 'TOGGLE_EDITOR'
 
 export function openEditor(data) {
   return async dispatch => {
+    dispatch({type: 'NEW_CLIENT'})
     dispatch({type: OPEN_EDITOR, payload: data || {}})
   }
 }

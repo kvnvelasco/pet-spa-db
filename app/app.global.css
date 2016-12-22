@@ -6,6 +6,7 @@
 body {
   background-color: #EFF1F3;
   font-size: 16px;
+  color: '#2f2f2f' !important
 }
 
 .pet-card {
@@ -15,6 +16,13 @@ body {
   border: 1px solid #ccc;
 }
 
+.ant-table {
+  color: '#2f2f2f'
+}
+
+.ant-input {
+  color: '#2f2f2f'
+}
 .ant-card {
   font-size: 14px;
 }

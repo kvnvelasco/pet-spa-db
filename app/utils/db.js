@@ -36,13 +36,29 @@ const SCHEMA = {
 const init = () => {
   if(!db){
     db = new Db('pet-spa')
-    db.version(VERSION).stores(INDEXES)
+    db.version(1).stores({
+      animals: '++id, name, breed',
+      clients: '++id, name',
+      groomers: '++id, name'
+    })
+    db.version(2).stores({
+      clients: '++id, name',
+      services: '++id, name',
+    })
+
+    db.version(3).stores({
+      clients: '++id, name',
+      services: '++id, name, type',
+    }).upgrade()
+
   }
+
   if(!db.isOpen()) db.open()
   return db
 }
 
 const verify = (table, object) => {
+  console.log(object)
   if(Array.isArray(object)) {
     object.forEach( item => {
       verify(table, item)
@@ -56,14 +72,13 @@ const verify = (table, object) => {
       if(type == 'array' && object[key].length >= 0){
         continue
       }
+    if(type === 'number' && typeof parseInt(object[key]) === 'number') continue
 
-     if(type === 'object')  verify(table[key], object[key])
-
+    if(type === 'object')  verify(table[key], object[key])
      if(typeof object[key] !== type ) {
         console.log(typeof object[key], type)
         throw {type: 'Schema Mismatch', message: `${key} must be ${table[key]} but it's ${object[key] || 'blank'}`}
       }
-
     }
     return true
   }
@@ -79,7 +94,11 @@ export async function put(table, object){
   init()
   await verify(SCHEMA[table], object)
   return await db[table].put(object)
+}
 
+export async function putWithoutVerify(table, object) {
+  init()
+  return await db[table].put(object)
 }
 
 export async function list(table) {

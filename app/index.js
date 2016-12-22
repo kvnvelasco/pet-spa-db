@@ -2,19 +2,17 @@
 import React from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
-import { Router, hashHistory } from 'react-router';
-import { syncHistoryWithStore } from 'react-router-redux';
-import routes from './routes';
 import configureStore from './store/configureStore';
 
 import './app.global.css';
 
 const store = configureStore();
-const history = syncHistoryWithStore(hashHistory, store);
 
 import enUS from 'antd/lib/locale-provider/en_US'
 import {LocaleProvider} from 'antd'
 
+import Layout from './screens/layout'
+import Home from './screens/home'
 
 Array.prototype.flatMap = function(lambda) {
     return Array.prototype.concat.apply([], this.map(lambda));
@@ -23,7 +21,9 @@ Array.prototype.flatMap = function(lambda) {
 render(
   <LocaleProvider locale={enUS}>
     <Provider store={store}>
-      <Router history={history} routes={routes} />
+      <Layout>
+        <Home />
+      </Layout>
     </Provider>
   </LocaleProvider>
   ,

@@ -6,6 +6,8 @@ import {Timeline} from 'antd'
 
 import { filterClients } from '../actions/client'
 
+
+// WARNING: Stateful component. Needs to be refactored.
 class Sidebar extends Component {
   constructor(){
     super()
