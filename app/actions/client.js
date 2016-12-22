@@ -43,15 +43,15 @@ export function getClients() {
 // bfs with query
 function traverse(o, query) {
     for (var i in o) {
-        if (o[i] !== null && typeof(o[i])=="object") {
-            //going on step down in the object tree!!
-            let found = traverse(o[i], query)
-            if(found) return true
-        }
-        if(typeof(o[i]) == 'string') {
-          const found = o[i].toLowerCase().indexOf(query.toLowerCase())
-          if(found >= 0) return true
-        }
+      if (i === 'transactions') return false
+      if (o[i] !== null && typeof(o[i])=="object") {
+          let found = traverse(o[i], query)
+          if(found) return true
+      }
+      if(typeof(o[i]) == 'string') {
+        const found = o[i].toLowerCase().indexOf(query.toLowerCase())
+        if(found >= 0) return true
+      }
     }
 }
 
