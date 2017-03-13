@@ -2,13 +2,28 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { DatePicker, Select, Input, Row, Col, Button, Table, Icon, Card, Modal } from 'antd'
 import moment from 'moment'
-
 import { IconWithText } from '../components/text'
 import { openEditor } from '../actions/layout'
-import { editClient, filterClients, getClients, deleteClient} from '../actions/client'
-import {bootstrap} from '../actions/services'
+import { editClient, filterClients, getClients, deleteClient, importClients} from '../actions/client'
+import {bootstrap, importServices} from '../actions/services'
+import {ipcRenderer} from 'electron'
+
+import {dumpDB} from '../utils/db'
+
 const Search = Input.Search
 const Option = Select.Option
+
+function dumpState() {
+  return async dispatch => {
+    try {
+      const db = await dumpDB()
+      dispatch({type: 'DUMPING_DB', db})
+      let send = await ipcRenderer.send('export', db)
+    } catch (e) {
+      console.error(e)
+    }
+  }
+}
 
 const columns = [{
     title: 'Name',
@@ -55,8 +70,20 @@ class Home extends Component {
   }
 
   componentWillMount() {
+    // set event listeners for state and export
+    ipcRenderer.on('backup', (e, msg) => this._dumpState.call(this))
+    ipcRenderer.on('import', (_, msg) => {
+      const {clients, services} = JSON.parse(msg)
+      if(!clients || !services) return false
+      this.props.dispatch(importClients(clients))
+      this.props.dispatch(importServices(services))
+    })
     this.props.dispatch(getClients())
     this.props.dispatch(bootstrap())
+  }
+
+  _dumpState() {
+    this.props.dispatch(dumpState())
   }
 
   _openEditor() {
@@ -110,8 +137,7 @@ class Home extends Component {
         return {...item, key: item.id}
       })
     }
-
-    return  <div className='container'>
+    return  <div className='container' >
               <Row type='flex' justify='space-around' gutter={20}>
                 <Col span={18}>
                   <Search onChange={this._filterClients.bind(this)} value={this.props.searchQuery || ''}
@@ -138,5 +164,5 @@ export default connect(store => ({
   search: store.clients.filtered,
   searchQuery: store.clients.filtered.query,
   transaction: store.clients.selected,
-  services: store.services
+  services: store.services,
 }))(Home)

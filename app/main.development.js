@@ -1,4 +1,5 @@
-import { app, BrowserWindow, Menu, shell } from 'electron';
+import { app, BrowserWindow, Menu, shell, MenuItem, ipcMain, dialog } from 'electron';
+import fs from 'fs'
 
 let menu;
 let template;
@@ -15,6 +16,24 @@ if (process.env.NODE_ENV === 'development') {
   const p = path.join(__dirname, '..', 'app', 'node_modules'); // eslint-disable-line
   require('module').globalPaths.push(p); // eslint-disable-line
 }
+
+ipcMain.on('export', (event, arg) => {
+  console.log('exporting data')
+  const path = dialog.showSaveDialog(mainWindow, {
+    title: 'Export your data',
+    buttonLabel: 'Export Clients!',
+    filters: [
+      {
+        name: 'Aroma Export',
+        extensions: ['aroma']
+      }
+    ]
+  })
+  if(!path) return false
+  console.log('to', path)
+  const saved = fs.writeFileSync(path, JSON.stringify(arg), 'utf-8')
+})
+
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
@@ -70,7 +89,6 @@ app.on('ready', async () => {
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
-
   if (process.env.NODE_ENV === 'development') {
     mainWindow.openDevTools();
     mainWindow.webContents.on('context-menu', (e, props) => {
@@ -119,6 +137,29 @@ app.on('ready', async () => {
         }
       }]
     }, {
+        label: 'File',
+        submenu: [
+          {
+            label: 'Export Database',
+            click() {
+              mainWindow.webContents.send('backup', 'export')
+            }
+          },
+          {
+            label: 'Import Database',
+            click() {
+              const path = dialog.showOpenDialog(mainWindow, {
+                title: 'Import Pet Spa Database',
+                properties: ['openFile']
+              })
+              if(!path) return false
+              console.log('Importing file from', path)
+              const file = fs.readFileSync(path[0], 'utf-8')
+              mainWindow.webContents.send('import', file)
+            }
+          }
+        ]
+      }, {
       label: 'Edit',
       submenu: [{
         label: 'Undo',
@@ -219,18 +260,29 @@ app.on('ready', async () => {
     Menu.setApplicationMenu(menu);
   } else {
     template = [{
-      label: '&File',
-      submenu: [{
-        label: '&Open',
-        accelerator: 'Ctrl+O'
+        label: 'File',
+        submenu: [
+          {
+            label: 'Export Database',
+            click() {
+              mainWindow.webContents.send('backup', 'export')
+            }
+          },
+          {
+            label: 'Import Database',
+            click() {
+              const path = dialog.showOpenDialog(mainWindow, {
+                title: 'Import Pet Spa Database',
+                properties: ['openFile']
+              })
+              console.log('Importing file from', path)
+              if(!path) return false
+              const file = fs.readFileSync(path[0], 'utf-8')
+              mainWindow.webContents.send('import', file)
+            }
+          }
+        ]
       }, {
-        label: '&Close',
-        accelerator: 'Ctrl+W',
-        click() {
-          mainWindow.close();
-        }
-      }]
-    }, {
       label: '&View',
       submenu: (process.env.NODE_ENV === 'development') ? [{
         label: '&Reload',

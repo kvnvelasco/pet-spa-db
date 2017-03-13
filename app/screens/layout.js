@@ -13,8 +13,9 @@ import {closeEditor} from '../actions/layout'
 class Layout extends Component {
   render(){
     const {editor, transaction, record, pet, services} = this.props.layout
+    const overflow = editor ? 'hidden' : 'auto'
     return  <div>
-              <Row type='flex' style={{minHeight: '100vh'}}>
+              <Row type='flex' style={{height: '100vh', overflow}}>
                 <Col span={5}>
                   <Sidebar />
                 </Col>

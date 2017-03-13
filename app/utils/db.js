@@ -84,6 +84,15 @@ const verify = (table, object) => {
   }
 }
 
+
+export async function dumpDB() {
+  init()
+  return {
+    clients: await list('clients'),
+    services: await list('services')
+  }
+}
+
 export async function add(table, object) {
   init()
   await verify(SCHEMA[table], object)

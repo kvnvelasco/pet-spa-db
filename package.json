@@ -153,6 +153,7 @@
     "dexie": "^1.5.1",
     "electron-debug": "^1.1.0",
     "font-awesome": "^4.7.0",
+    "lodash": "^4.17.4",
     "moment": "^2.17.1",
     "moment-timezone": "^0.5.10",
     "react": "^15.4.1",

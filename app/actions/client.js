@@ -2,7 +2,7 @@ export const SAVE_CLIENT = 'SAVE_CLIENT'
 export const EDIT_CLIENT = 'EDIT_CLIENT'
 export const FILTER_CLIENTS = 'FILTER_CLIENTS'
 export const UNFILTER_CLIENTS = 'UNFILTER_CLIENTS'
-
+import {debounce} from 'lodash'
 import { add, put, list , dbDelete } from '../utils/db'
 import { message } from 'antd'
 import { closeEditor } from './layout'
@@ -29,6 +29,20 @@ export function saveClient(data) {
   }
 }
 
+export function importClients(clients) {
+  return async dispatch => {
+    try {
+      for(var client of clients) {
+        await put('clients', client)
+      }
+      getClients()(dispatch)
+    } catch (e) {
+      console.error(e)
+    }
+  }
+}
+
+
 export function getClients() {
   return async dispatch => {
     try {
@@ -43,17 +57,20 @@ export function getClients() {
 // bfs with query
 function traverse(o, query) {
     for (var i in o) {
-      if (i === 'transactions') return false
-      if (o[i] !== null && typeof(o[i])=="object") {
-          let found = traverse(o[i], query)
-          if(found) return true
-      }
-      if(typeof(o[i]) == 'string') {
-        const found = o[i].toLowerCase().indexOf(query.toLowerCase())
-        if(found >= 0) return true
+      if (i !== 'name' || i !== 'email') {
+        if (o[i] !== null && typeof(o[i])=="object") {
+            let found = traverse(o[i], query)
+            if(found) return true
+        }
+        if(typeof(o[i]) == 'string') {
+          const found = o[i].toLowerCase().indexOf(query.toLowerCase())
+          if(found >= 0) return true
+        }
       }
     }
 }
+
+
 
 export function filterClients(query, array) {
   return async dispatch => {

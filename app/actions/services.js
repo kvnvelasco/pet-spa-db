@@ -3,11 +3,12 @@ import { add, putWithoutVerify, list , dbDelete } from '../utils/db'
 export function bootstrap() {
   return async dispatch => {
     try {
-      const getServices = await list('services')
+      let getServices = await list('services')
       if(!getServices.length) {
         for(let i = 0; i < seed.length; i++) {
           let save = await putWithoutVerify('services', seed[i])
         }
+        getServices = await list('services')
       }
       // screw with the services to make it manageable
       const services = getServices.reduce( (acc, item) => {
@@ -17,6 +18,25 @@ export function bootstrap() {
     } catch (e) {
       console.error(e)
     }
+  }
+}
+
+export function importServices(services) {
+  return async dispatch => {
+    try {
+      for(var service of services) {
+        await put('clients', service)
+      }
+      bootstrap()(dispatch)
+    } catch (e) {
+      console.error(e)
+    }
+  }
+}
+
+export function getServices() {
+  return async dispatch => {
+    return await list('services')
   }
 }
 
